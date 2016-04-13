@@ -1,6 +1,10 @@
 <h2>Articles</h2>
 
+<%= render 'search' %>
+
 <h3 id="articles-top">List of Articles | <%= link_to "Add New Article", "#add-new-article" %></h3>
+
+<h4>Showing <%= @articles.count %> results</h4>
 
 <div class="row">
   <div class="columns small-12">
