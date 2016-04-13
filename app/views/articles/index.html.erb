@@ -1,6 +1,6 @@
 <h2>Articles</h2>
 
-<h3>List of Articles</h3>
+<h3 id="articles-top">List of Articles | <%= link_to "Add New Article", "#add-new-article" %></h3>
 
 <div class="row">
   <div class="columns small-12">
@@ -19,5 +19,5 @@
   </div>
 </div>
 
-<h3>Add New Article</h3>
+<h3 id="add-new-article">Add New Article | <%= link_to "Back To Top", "#articles-top" %></h3>
 <%= render "form" %>
