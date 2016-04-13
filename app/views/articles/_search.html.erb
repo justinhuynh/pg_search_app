@@ -1,0 +1,8 @@
+<h3>Search</h3>
+<p>
+  <%= form_tag articles_path, method: :get do %>
+    <%= label_tag :query, "Keywords" %>
+    <%= text_field_tag :query %>
+    <%= submit_tag "Search" %>
+  <% end %>
+</p>

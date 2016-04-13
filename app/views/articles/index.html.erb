@@ -1,0 +1,23 @@
+<h2>Articles</h2>
+
+<h3>List of Articles</h3>
+
+<div class="row">
+  <div class="columns small-12">
+    <table>
+      <tr>
+        <th>Title</th>
+        <th>Body</th>
+      </tr>
+      <% @articles.each do |article| %>
+        <tr>
+          <td><%= article.title %></td>
+          <td><%= article.body %></td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+</div>
+
+<h3>Add New Article</h3>
+<%= render "form" %>
