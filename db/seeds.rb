@@ -20,3 +20,25 @@ end
   }
   Article.create(article_attributes)
 end
+
+COMMENT_BODY = [
+  "How interesting. I love how it ties the room together.",
+  "This is an interesting article",
+  "I loved your article. For more info, please check out my site",
+  "That's a pretty bizarre statement",
+  "What a bizarre article",
+  "I don't understand your statement",
+  "That's a pretty strange combination of words"
+]
+
+def build_comment_body
+  COMMENT_BODY.sample + " #{HIPSTER_WORDS.sample}"
+end
+
+400.times do
+  comment_attributes = {
+    body: build_comment_body,
+    article_id: Article.pluck(:id).sample
+  }
+  Comment.create(comment_attributes)
+end
