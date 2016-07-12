@@ -12,11 +12,19 @@
       <tr>
         <th>Title</th>
         <th>Body</th>
+        <th>Comments</th>
       </tr>
       <% @articles.each do |article| %>
         <tr>
-          <td><%= article.title %></td>
+          <td><%= link_to article.title, article_path(article) %></td>
           <td><%= article.body %></td>
+          <td>
+            <ul>
+              <% article.comments.each do |comment| %>
+                <li><%= comment.body %></li>
+              <% end %>
+            </ul>
+          </td>
         </tr>
       <% end %>
     </table>

@@ -1,7 +1,13 @@
 class ArticlesController < ApplicationController
   def index
-    @articles = Article.search(params[:query])
+    # @articles = Article.search(params[:query])
+    @articles = Article.global_search(params[:query])
     @article = Article.new
+  end
+
+  def show
+    @article = Article.find(params[:id])
+    @comments = @article.comments
   end
 
   def create
