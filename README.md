@@ -10,10 +10,41 @@ Postgres has powerful, [built-in fulltext search](http://www.postgresql.org/docs
 4. Add a `pg_search_scope` to your model   
 `pg_search_scope :search_article_only, against: [:title, :body]`
 
-5. Add an ActiveRecord `scope` that accepts a `query` argument and executes the scope you defined.  
+5. Add an ActiveRecord `scope` that accepts a `query` argument and executes the scope you defined. We need our search functionality to return matching results if there is a query - and ALL results if there is no query.
 Adding ActiveRecord scopes to your model is like creating a class method for your model, but one that is capable of handling the `nil` case. Scopes also return all results when there are no matches (which is what we expect for search/filters) [more here](http://aspiringwebdev.com/use-activerecord-scopes-not-class-methods-in-rails-to-avoid-errors/)
-
+```rb
+# models/article.rb
+scope :search, -> (query) { search_article_only(query) if query.present? }
+```
+We would call this with:
+```ruby
+Article.search("blah")
+```
 6. Add search form that sends a query to controller path (this will come in as a query string on the url - much like Google)
+```rb
+# views/articles/_search.html.erb
+<h3>Search</h3>
+<p>
+  <%= form_tag articles_path, method: :get do %>
+    <%= label_tag :query, "Keywords" %>
+    <%= text_field_tag :query %>
+    <%= submit_tag "Search" %>
+  <% end %>
+</p>
+```
+The reason we use a GET request is that we're trying to access a list of articles - and we're just sending a filter query along. So we essentially want `articles#index`, but filtered.
+
+7. Finally, add a method to your controller (`articles#index`) that implements this method:
+
+```ruby
+# app/controllers/articles_controller.rb
+class ArticlesController < ApplicationController
+  def index
+    # return article based on search methods defined on model
+    @articles = Article.search(params[:query])
+    @article = Article.new
+  end
+```
 
 ### Adding Global Multisearch
 

@@ -27,6 +27,6 @@ class Article < ActiveRecord::Base
   # which is the behavior we want for a filter/search
 
   # def self.search(query)
-  #   search_by_title_and_body(query) if query.present?
+  #   search_article_only(query) if query.present?
   # end
 end
