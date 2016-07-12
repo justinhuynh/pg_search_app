@@ -11,6 +11,8 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'pry-rails'
 gem 'foundation-rails'
+
+# add pg_search gem
 gem 'pg_search'
 gem 'faker'
 

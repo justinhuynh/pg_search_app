@@ -1,5 +1,6 @@
 class ArticlesController < ApplicationController
   def index
+    # return article based on search methods defined on model
     # @articles = Article.search(params[:query])
     @articles = Article.global_search(params[:query])
     @article = Article.new
