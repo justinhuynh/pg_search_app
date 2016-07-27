@@ -83,3 +83,77 @@ class Article < ActiveRecord::Base
 ```
 
 Note that our `Article` model `has_many :comments`, so we need to specify `comments:` - rather than `comment:`
+
+### More On Global Multisearch
+
+##### What if you want to search across many **non-associated** models?
+
+Let's say that `Article` and `Comment` were not in fact associated.
+
+First, set up `multisearchable against: [:column1, :column2]` in each model, with `column1` and `column2` corresponding to the columns in each model that you want to be indexed
+
+We have two options:
+1) Do a global search and return an **array** (not an `ActiveRecord::Relation`!) of all matching objects, regardless of type (model)
+
+```ruby
+query = "cool"
+
+results = PgSearch.multisearch("keffiyeh")
+
+=> [ ...
+#<PgSearch::Document:0x007feb6c16b660
+ id: 101,
+ content: "hedgehog dog pop-up chillwave selvage cleanse keffiyeh Blue bottle selvage art party messenger bag.",
+ searchable_id: 101,
+ searchable_type: "Article",
+ created_at: Sun, 10 Jul 2016 22:41:47 UTC +00:00,
+ updated_at: Sun, 10 Jul 2016 22:41:47 UTC +00:00>,
+#<PgSearch::Document:0x007feb6c16b520
+ id: 901,
+ content: "keffiyeh",
+ searchable_id: 400,
+ searchable_type: "Comment",
+ created_at: Wed, 27 Jul 2016 20:39:26 UTC +00:00,
+ updated_at: Wed, 27 Jul 2016 20:40:33 UTC +00:00>]
+
+results.class
+# => PgSearch::Document::ActiveRecord_Relation
+```
+
+Calling `PgSearch.multisearch` directly returns an `ActiveRecord_Relation` of `PgSearch::Document` objects.
+
+The `searchable_type` field contains the model name, and the `searchable_id` contains the id of the record within that model. So in the above example, the two matches are: `Article` with an `id` of `101` and `Comment` with an `id` of `400`.
+
+We can convert this into an array of assorted objects by running something like the following:
+
+```ruby
+results.map do |result|
+  Object.const_get(result.searchable_type).find(result.searchable_id)
+end
+```
+
+If `result.searchable_type` is "Comment", `Object.const_get(result.searchable_type)` returns the class `Comment` (which is a constant, since the names of Ruby classes are constants.
+
+Then we are simply calling `.find` on the `Comment` class.
+
+2) Create a model that does not inherit from `ActiveRecord::Base`, which can be responsible for implementing the same query across each model
+
+```ruby
+class GlobalSearch
+  def initialize(query)
+    @query = query
+  end
+
+  def result_articles
+    Article.search(query)
+  end
+
+  def result_comments
+    Comment.search(query)
+  end
+end
+```
+
+### How To Test Stuff Out
+
+Once you've updated your models for search capability, just try things out in `rails c` to ensure that you are getting the results that you expected. It's really easy to create new objects that will match a search to sanity check your search setup (without having to deal with the Controller or View levels).
